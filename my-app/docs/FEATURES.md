@@ -182,6 +182,119 @@ Simple auth so users can save and retrieve their circuits.
 
 **Implementation:**
 - Supabase Auth handles everything: registration, login, session tokens, password reset
-- The frontend uses `@supabase/supabase-js` to manage auth state
-- Protected routes/features check for an active session before allowing save/load
-- Unauthenticated users can still use the Bloch sphere and gates — they just can't save
+- Uses `@supabase/ssr` with server-side cookie-based sessions (not the browser-only SDK)
+- `createBrowserClient` for client components, `createServerClient` for server components and middleware
+- Next.js middleware refreshes the session on every request
+- Auth callback route at `/auth/callback` handles email confirmation code exchange
+- Protected routes check for an active session server-side before rendering
+- Unauthenticated users are redirected to `/login`
+
+**Auth flow:**
+- Signup at `/signup` creates the account, then redirects to `/login?message=Account created successfully`
+- Login at `/login` authenticates via Supabase, then redirects to `/dashboard`
+- Sign out calls a server action, clears the session, and redirects to `/login`
+
+**Auth pages:**
+- Dark futuristic styling: `bg-zinc-950` background, translucent card (`bg-zinc-900/50 backdrop-blur-md`), rounded-2xl
+- Error messages shown in tinted alert panels (red for errors, emerald for success)
+- Links between login and signup pages for easy navigation
+
+---
+
+## 9. Dashboard UI Shell
+
+The main application interface after login. A single-page layout with all quantum controls and readouts.
+
+**Layout:**
+
+```
+ ┌──────────────────────────────────────────────────────────────┐
+ │ TopBar: "QubitLab"                      [user@email ▾]      │
+ ├────────────┬─────────────────────────────────────────────────┤
+ │            │                                                 │
+ │ Control    │         Bloch Sphere Viewport                   │
+ │ Panel      │         (placeholder, flex-1)                   │
+ │ (w-72)     │                                                 │
+ │            │                                                 │
+ │ - State    ├─────────────────────────────────────────────────┤
+ │   Input    │                                                 │
+ │ - Gates    │         Info Panel                              │
+ │ - Custom   │         (status + notation toggle)              │
+ │   Gate     │                                                 │
+ │ - Sequence │                                                 │
+ │ - Run      │                                                 │
+ │            │                                                 │
+ └────────────┴─────────────────────────────────────────────────┘
+```
+
+**TopBar (`components/dashboard/top-bar.tsx`):**
+- Left: "QubitLab" title text
+- Right: Account dropdown button showing user's email + User icon
+- Dropdown menu items: Profile (placeholder), Sign out (calls server action)
+- Uses shadcn DropdownMenu, styled with `bg-zinc-900 backdrop-blur-md` and `rounded-xl`
+
+**ControlPanel (`components/dashboard/control-panel.tsx`):**
+- Fixed 288px (w-72) sidebar on the left, scrollable content
+- Sections separated by translucent panels with section headers (`text-xs uppercase tracking-wider text-zinc-500`)
+- **Initial State**: Two ComplexInput subcomponents for alpha and beta amplitudes (each with real + imaginary fields, monospace font)
+- **Standard Gates**: 3-column grid of gate buttons (X, Y, Z, H, S, T) styled with `bg-zinc-700/30 hover:bg-zinc-600/40`
+- **Custom Gate**: Axis toggle (X/Y/Z buttons), angle input in degrees, unitary check indicator (green check or red X icon), "Add Gate" button
+- **Gate Sequence**: Conditional display showing queued gate tags with individual clear buttons (Trash2 icon per gate)
+- **Run Button**: Pinned at bottom, full width, `bg-sky-600 hover:bg-sky-500`, rounded-2xl, Play icon
+- Exports `GateEntry` type: `{ name: string; isCustom?: boolean }`
+- `onRun` callback passes `{ alphaReal, alphaImag, betaReal, betaImag, gates }` to the parent shell
+
+**SphereViewport (`components/dashboard/sphere-viewport.tsx`):**
+- Placeholder component that will house the React Three Fiber Bloch sphere in Phase 3
+- Currently shows a Circle icon and "Bloch Sphere" label, centered in a translucent panel
+- Uses `flex-1` to fill all available vertical space
+
+**InfoPanel (`components/dashboard/info-panel.tsx`):**
+- Two-column grid layout at the bottom-right of the dashboard
+- **Status Panel**: Displays alpha, beta (formatted as complex numbers), theta, phi (in degrees), phase, normalization (N), and entangled boolean
+- **Notation Panel**: Toggle between Dirac and Matrix representations
+  - Dirac: Shows `|psi> = alpha|0> + beta|1>` with special formatting for pure basis states
+  - Matrix: Shows column vector `[alpha, beta]^T` with CSS bracket styling
+- Exports `QubitStatus` type with complex alpha/beta, theta, phi, phase, n, entangled fields
+- `formatComplex()` helper for clean complex number display (omits zero parts, handles sign)
+
+**DashboardShell (`components/dashboard/dashboard-shell.tsx`):**
+- Client component (`'use client'`) that manages shared state across all dashboard panels
+- Holds `QubitStatus` state (default: |0> state with alpha=1, beta=0)
+- Holds notation mode state (`'dirac' | 'matrix'`)
+- Provides `handleRun` callback: receives control panel data, computes normalization N, updates status
+- Composes all sub-components: TopBar, ControlPanel, SphereViewport, InfoPanel
+- Full-height layout: `h-screen flex flex-col bg-zinc-950`
+
+**Dashboard Page (`app/dashboard/page.tsx`):**
+- Server component with auth guard
+- Uses `createClient` from `@/lib/supabase/server` to get the current user
+- Redirects unauthenticated users to `/login` via `next/navigation` redirect
+- Renders `DashboardShell` with the user's email passed as a prop
+
+---
+
+## 10. Design System
+
+The app follows a consistent visual language across all pages.
+
+**Color palette:**
+- Background: `zinc-950` (near black)
+- Surface panels: `zinc-900/60` with `backdrop-blur-md` (translucent, frosted glass effect)
+- Borders: `zinc-800/50` (subtle, semi-transparent)
+- Text primary: `zinc-100`
+- Text secondary: `zinc-400` / `zinc-500`
+- Accent: `sky-600` (buttons, active states)
+- Danger: `red` tint for errors
+- Success: `emerald` tint for success messages
+
+**Component styling rules:**
+- All panels: `rounded-2xl border border-zinc-800/50 bg-zinc-900/60 backdrop-blur-md p-4`
+- Section headers: `text-xs font-medium uppercase tracking-wider text-zinc-500 mb-3`
+- Input fields: `rounded-lg border-zinc-700/50 bg-zinc-800/50 text-zinc-100 font-mono`
+- Buttons: `rounded-xl` or `rounded-2xl`, no gradients
+- No emojis anywhere (lucide-react icons only)
+- No animations or transitions
+- No gradients
+- No em dashes
+- Geist Sans + Geist Mono fonts (loaded via next/font/google)
