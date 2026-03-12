@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
 
 export async function signup(formData: FormData) {
@@ -33,11 +33,11 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/signup?error=Could not create account. Try a different email.')
+    redirect('/signup?error=Could not create account')
   }
 
   revalidatePath('/', 'layout')
-  redirect('/signup?message=Check your email to confirm your account')
+  redirect('/login?message=Account created successfully')
 }
 
 export async function signout() {
