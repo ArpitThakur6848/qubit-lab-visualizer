@@ -5,6 +5,7 @@ import { TopBar } from './top-bar'
 import { ControlPanel, type GateEntry } from './control-panel'
 import { SphereViewport } from './sphere-viewport'
 import { InfoPanel, type QubitStatus } from './info-panel'
+import { runCircuit } from '@/lib/qubit'
 
 const DEFAULT_STATUS: QubitStatus = {
   alpha: { real: 1, imag: 0 },
@@ -16,8 +17,11 @@ const DEFAULT_STATUS: QubitStatus = {
   entangled: false,
 }
 
+const DEFAULT_BLOCH: [number, number, number] = [0, 1, 0] // |0⟩ = north pole (Z+ mapped to Y+ in scene)
+
 export function DashboardShell({ email }: { email: string }) {
   const [status, setStatus] = useState<QubitStatus>(DEFAULT_STATUS)
+  const [blochVector, setBlochVector] = useState<[number, number, number]>(DEFAULT_BLOCH)
   const [notation, setNotation] = useState<'dirac' | 'matrix'>('dirac')
 
   const handleRun = (data: {
@@ -27,22 +31,24 @@ export function DashboardShell({ email }: { email: string }) {
     betaImag: number
     gates: GateEntry[]
   }) => {
-    // Placeholder: updates status with input values
-    // Will be replaced by qubit state engine computation
-    const n = Math.sqrt(
-      data.alphaReal ** 2 +
-        data.alphaImag ** 2 +
-        data.betaReal ** 2 +
-        data.betaImag ** 2
+    const result = runCircuit(
+      { real: data.alphaReal, imag: data.alphaImag },
+      { real: data.betaReal, imag: data.betaImag },
+      data.gates
     )
 
+    const [bx, by, bz] = result.blochXYZ
+    // Map Bloch coordinates to Three.js scene:
+    // Bloch X -> scene X, Bloch Z -> scene Y (up), Bloch Y -> scene Z
+    setBlochVector([bx, bz, by])
+
     setStatus({
-      alpha: { real: data.alphaReal, imag: data.alphaImag },
-      beta: { real: data.betaReal, imag: data.betaImag },
-      theta: 0,
-      phi: 0,
-      phase: 0,
-      n: n || 0,
+      alpha: { real: result.state[0].real, imag: result.state[0].imag },
+      beta: { real: result.state[1].real, imag: result.state[1].imag },
+      theta: (result.theta * 180) / Math.PI,
+      phi: (result.phi * 180) / Math.PI,
+      phase: result.phase,
+      n: result.n,
       entangled: false,
     })
   }
@@ -53,7 +59,7 @@ export function DashboardShell({ email }: { email: string }) {
       <div className="flex flex-1 gap-4 overflow-hidden p-4">
         <ControlPanel onRun={handleRun} />
         <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-          <SphereViewport />
+          <SphereViewport blochVector={blochVector} />
           <InfoPanel
             status={status}
             notation={notation}

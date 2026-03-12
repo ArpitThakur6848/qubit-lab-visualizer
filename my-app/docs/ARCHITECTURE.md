@@ -45,11 +45,39 @@ There is no separate backend service. Next.js API routes handle server-side conc
 
 ### Frontend (React + Next.js App Router)
 
-- Renders the UI: Bloch sphere, gate buttons, state readout, AI chat panel
+- Renders the UI: auth pages, dashboard, Bloch sphere, gate controls, state readout, AI chat panel
+- Uses the App Router with server components for auth guards and client components for interactive UI
 - Manages application state via React hooks (`useState`, `useReducer`)
 - Calls the qubit state engine on every gate application
-- Communicates with Supabase directly for auth and circuit CRUD (using the browser SDK)
+- Communicates with Supabase via SSR-compatible clients (`@supabase/ssr`)
 - Calls Next.js API routes for OpenAI requests
+- Global dark mode enabled via `className="dark"` on the `<html>` element
+
+### Auth Layer
+
+- **Login/Signup pages** in `app/(auth)/` route group (server components)
+- **Server actions** in `app/(auth)/actions.ts` handle login, signup, signout via `createClient()` from `lib/supabase/server`
+- **Middleware** (`middleware.ts`) calls `updateSession()` on every matched route to keep cookies fresh
+- **Auth callback** (`app/auth/callback/route.ts`) exchanges auth codes for sessions
+- **`useUser` hook** (`hooks/use-user.ts`) provides client-side user state with auth state change listener
+
+### Dashboard Layer
+
+The dashboard is composed of modular components under `components/dashboard/`:
+
+```
+app/dashboard/page.tsx          ← Server component (auth guard)
+  └── DashboardShell            ← Client component (shared state)
+        ├── TopBar               ← App title + account dropdown
+        ├── ControlPanel         ← State input, gates, custom gate, sequence, run
+        ├── SphereViewport       ← Bloch sphere placeholder (future R3F)
+        └── InfoPanel            ← Status readout + notation toggle
+```
+
+- **DashboardShell** is the only client boundary; it owns `QubitStatus` state and notation mode
+- **ControlPanel** fires `onRun` with alpha/beta values and gate sequence
+- **InfoPanel** receives computed status and renders Dirac or Matrix notation
+- **TopBar** receives the email from the server component's auth check
 
 ### Visualization Layer (React Three Fiber)
 
@@ -72,10 +100,15 @@ There is no separate backend service. Next.js API routes handle server-side conc
 
 ### Database Layer (Supabase)
 
-- **Auth**: Handles user registration, login, and session management
+- **Auth**: Handles user registration, login, and session management via cookie-based SSR sessions
 - **Database**: PostgreSQL with row-level security (RLS)
-- **Tables**: `users` (managed by Supabase Auth), `saved_circuits`, `circuit_steps`
-- The browser SDK talks directly to Supabase using the anon key; RLS policies ensure users can only access their own data
+- **Tables**: `profiles`, `saved_circuits`, `circuit_steps` (schema defined in `supabase/schema.sql`)
+- **Client setup**: Three client files in `lib/supabase/`:
+  - `client.ts` - `createBrowserClient` for client components
+  - `server.ts` - `createServerClient` with cookie handling for server components and server actions
+  - `middleware.ts` - `updateSession` for Next.js middleware session refresh
+- RLS policies ensure users can only access their own data
+- The anon key is used for all client calls; no service_role key in the frontend
 
 ### AI Layer (OpenAI API)
 
