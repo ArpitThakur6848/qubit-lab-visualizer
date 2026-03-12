@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QubitLab Visualizer
+
+An interactive web app that visualizes single-qubit quantum states on a 3D Bloch sphere. You can observe the state of a qubit, apply quantum gates, and watch the state evolve in real time.
+
+![Status](https://img.shields.io/badge/status-in%20development-yellow)
+
+---
+
+## Overview
+
+QubitLab Visualizer is useful for conceptualizing abstract concepts. You can visually see a qubit vector rotate on a Bloch sphere when you apply an X gate, and see the resultant values that occur from it, such as the amplitudes.
+
+The web app includes an AI explainer that can answer clarifying questions from the user.
+
+## Features
+
+- **3D Bloch Sphere** - Interactive, rotatable visualization of a single qubit state using React Three Fiber
+- **Quantum Gate Controls** - Apply X, Y, Z, H, S, and T gates
+- **State Display** - View amplitudes, probabilities, and Dirac notation
+- **Preset Examples** - Pre-built sequences that demonstrate key quantum concepts (superposition, etc.)
+- **Save & Load Circuits** - Persist gate sequences to Supabase so you can revisit or share them
+- **AI Explainer** - Ask the built-in assistant clarifying questions 
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js (App Router) |
+| Language | TypeScript |
+| 3D Rendering | React Three Fiber + Three.js |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Database & Auth | Supabase (PostgreSQL + Auth) |
+| AI | OpenAI API (chat completions) |
+| Hosting | AWS Amplify |
+
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm or pnpm
+- A Supabase project (free tier works)
+- An OpenAI API key
+
+### Installation
+
+```bash
+git clone https://github.com/<your-username>/qubit-lab-visualizer.git
+cd qubit-lab-visualizer/my-app
+npm install
+```
+
+### Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000).
