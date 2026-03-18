@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Play, Trash2, Plus, Check, X } from 'lucide-react'
+import { Play, Trash2, Plus, Check, X, RotateCcw, FolderOpen } from 'lucide-react'
+import { SaveCircuitDialog } from './save-circuit-dialog'
 
 export type GateEntry = {
   name: string
@@ -16,6 +17,11 @@ interface ControlPanelProps {
     betaImag: number
     gates: GateEntry[]
   }) => void
+  onReset: () => void
+  gates: GateEntry[]
+  onGatesChange: (gates: GateEntry[]) => void
+  onSaved: () => void
+  onOpenSavedCircuits: () => void
 }
 
 const STANDARD_GATES = ['X', 'Y', 'Z', 'H', 'S', 'T'] as const
@@ -27,25 +33,26 @@ const sectionHeader = 'text-xs font-medium uppercase tracking-wider text-zinc-50
 
 const panelClass = 'rounded-2xl border border-zinc-800/50 bg-zinc-900/60 backdrop-blur-md p-4'
 
-export function ControlPanel({ onRun }: ControlPanelProps) {
+export function ControlPanel({ onRun, onReset, gates, onGatesChange, onSaved, onOpenSavedCircuits }: ControlPanelProps) {
   const [alphaReal, setAlphaReal] = useState('1')
   const [alphaImag, setAlphaImag] = useState('0')
   const [betaReal, setBetaReal] = useState('0')
   const [betaImag, setBetaImag] = useState('0')
 
-  const [gateSequence, setGateSequence] = useState<GateEntry[]>([])
+  const gateSequence = gates
+  const setGateSequence = onGatesChange
 
   const [customAxis, setCustomAxis] = useState<'X' | 'Y' | 'Z'>('X')
   const [customAngle, setCustomAngle] = useState('90')
 
   const addGate = (name: string) => {
-    setGateSequence((prev) => [...prev, { name }])
+    setGateSequence([...gateSequence, { name }])
   }
 
   const addCustomGate = () => {
     const angle = parseFloat(customAngle) || 0
-    setGateSequence((prev) => [
-      ...prev,
+    setGateSequence([
+      ...gateSequence,
       {
         name: `R${customAxis.toLowerCase()}(${angle})`,
         isCustom: true,
@@ -54,6 +61,17 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
   }
 
   const clearSequence = () => setGateSequence([])
+
+  const handleReset = () => {
+    setAlphaReal('1')
+    setAlphaImag('0')
+    setBetaReal('0')
+    setBetaImag('0')
+    onGatesChange([])
+    setCustomAxis('X')
+    setCustomAngle('90')
+    onReset()
+  }
 
   const handleRun = () => {
     onRun({
@@ -68,7 +86,7 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
   const isUnitary = customAngle !== '' && !isNaN(parseFloat(customAngle))
 
   return (
-    <div className="flex w-72 shrink-0 flex-col overflow-hidden">
+    <div className="flex w-full flex-col overflow-hidden md:w-72 md:shrink-0">
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto pr-1">
         {/* State Input */}
         <div className={panelClass}>
@@ -164,12 +182,15 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
               <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-500">
                 Sequence
               </h3>
-              <button
-                onClick={clearSequence}
-                className="text-zinc-500 hover:text-zinc-300"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <SaveCircuitDialog gates={gateSequence} onSaved={onSaved} />
+                <button
+                  onClick={clearSequence}
+                  className="text-zinc-500 hover:text-zinc-300"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {gateSequence.map((gate, i) => (
@@ -187,13 +208,29 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
             </div>
           </div>
         )}
+
+        {/* Saved Circuits Button */}
+        <button
+          onClick={onOpenSavedCircuits}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-800/50 bg-zinc-900/60 backdrop-blur-md p-3 text-sm text-zinc-400 hover:border-zinc-700/60 hover:bg-zinc-800/40 hover:text-zinc-200"
+        >
+          <FolderOpen className="h-4 w-4" />
+          Saved Circuits
+        </button>
       </div>
 
-      {/* Run Button - pinned at bottom */}
-      <div className="pt-3">
+      {/* Action Buttons - pinned at bottom */}
+      <div className="flex gap-2 pt-3">
+        <button
+          onClick={handleReset}
+          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-700/40 bg-zinc-800/30 px-4 py-3 text-sm font-medium text-zinc-300 hover:bg-zinc-700/50"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
         <button
           onClick={handleRun}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-sky-600 py-3 text-sm font-medium text-white hover:bg-sky-500"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-sky-600 py-3 text-sm font-medium text-white hover:bg-sky-500"
         >
           <Play className="h-4 w-4" />
           Run
@@ -217,9 +254,9 @@ function ComplexInput({
   onImagChange: (v: string) => void
 }) {
   return (
-    <div className="space-y-1.5">
-      <span className="text-xs font-mono text-zinc-400">{label}</span>
-      <div className="flex items-center gap-2">
+    <div className="flex items-end gap-2">
+      <span className="pb-1.5 text-xs font-mono text-zinc-400">{label}</span>
+      <div className="flex flex-1 items-center gap-2">
         <div className="flex-1">
           <label className="text-[11px] text-zinc-500">Re</label>
           <input

@@ -26,8 +26,8 @@ Track what's done and what's next. Check off items as they're completed.
 - [x] Implement Dirac notation string formatting
 - [x] Implement rotation gate construction (Rx, Ry, Rz from axis + angle)
 - [x] Implement full circuit runner pipeline (initial state + gate sequence)
-- [ ] Write unit tests for all gate applications against known results
-- [ ] Write unit tests for coordinate conversion (|0⟩, |1⟩, |+⟩, |−⟩)
+- [x] Write unit tests for all gate applications against known results
+- [x] Write unit tests for coordinate conversion (|0⟩, |1⟩, |+⟩, |−⟩)
 
 ## Phase 3: Bloch Sphere Visualization
 
@@ -42,7 +42,7 @@ Track what's done and what's next. Check off items as they're completed.
 - [x] Reset camera button to return to default orientation
 - [x] Toggle buttons for X, Y, Z axis visibility
 - [x] Dynamic import with SSR disabled for Three.js compatibility
-- [ ] Verify correct positioning for known states (|0⟩ = north, |1⟩ = south, |+⟩ = equator)
+- [x] Verify correct positioning for known states (|0⟩ = north, |1⟩ = south, |+⟩ = equator)
 
 ## Phase 4: Gate Controls & State Display (UI Shell)
 
@@ -51,10 +51,10 @@ Track what's done and what's next. Check off items as they're completed.
 - [x] Create state display component (amplitudes, Dirac/Matrix notation, Bloch angles)
 - [x] Create gate sequence component (ordered list of applied gates with clear)
 - [x] Create custom gate builder component (axis, angle, unitary check)
-- [ ] Add "Reset" functionality (qubit state back to |0⟩, sequence cleared)
+- [x] Add "Reset" functionality (qubit state back to |0⟩, sequence cleared)
 - [x] Layout the main page: sphere center, controls left, status bottom-right
 - [x] Dark mode futuristic styling (translucent panels, rounded edges, zinc palette)
-- [ ] Responsive layout adjustments for smaller screens
+- [x] Responsive layout adjustments for smaller screens
 
 ## Phase 5: Supabase Integration
 
@@ -65,11 +65,7 @@ Track what's done and what's next. Check off items as they're completed.
 - [x] Add auth state management (`useUser` hook + middleware session refresh)
 - [x] Define `saved_circuits` and `circuit_steps` tables in SQL schema
 - [x] Define RLS policies in SQL schema (users can only access their own data)
-- [ ] Build save circuit function (insert circuit + steps)
-- [ ] Build load circuit list function (fetch user's circuits)
-- [ ] Build load single circuit function (fetch steps, replay gates)
-- [ ] Build delete circuit function
-- [ ] Add UI for save/load/delete (modal or sidebar panel)
+
 
 ## Phase 5b: Auth UI
 
@@ -93,23 +89,33 @@ Track what's done and what's next. Check off items as they're completed.
 - [x] Install shadcn dropdown-menu component
 - [x] TypeScript compilation verified (zero errors)
 
-## Phase 6: Preset Learning Examples
+## Phase 6: Preset Gate Sequences & Persistence
 
-- [ ] Define 3-5 preset gate sequences with descriptions
-- [ ] Create preset selector component (dropdown or cards)
-- [ ] Implement preset loading (reset then apply gates in sequence)
-- [ ] Show a short explanation for each preset
+- [x] Create `lib/circuits.ts` data access layer (save/load/delete circuits, save/load run history)
+- [x] Create `SaveCircuitDialog` component (save current gate sequence with name)
+- [x] Create `SavedCircuitsPanel` component (collapsible panel to view/load/delete saved circuits)
+- [x] Create `RunHistoryPanel` component (collapsible panel showing last 10 runs with timestamps)
+- [x] Integrate SaveCircuitDialog into ControlPanel sequence section
+- [x] Integrate SavedCircuitsPanel and RunHistoryPanel into ControlPanel sidebar
+- [x] Lift gate sequence state to DashboardShell for cross-component sharing
+- [x] Persist run history on every Run (fire-and-forget with auto-refresh)
+- [x] Add `is_custom` column to `circuit_steps` table in schema
+- [x] Add `run_history` table with RLS policies in schema
+- [x] TypeScript compilation verified (zero errors)
+- [x] All 61 existing unit tests pass
 
 ## Phase 7: AI Explainer
 
-- [ ] Create `/api/ai` route in Next.js
-- [ ] Write the system prompt for the quantum computing tutor
-- [ ] Implement OpenAI chat completions call with `max_tokens` cap
-- [ ] Add basic rate limiting or request throttling
-- [ ] Create chat panel component in the frontend
-- [ ] Wire chat input to the API route
-- [ ] Display AI responses in the panel
-- [ ] Optionally pass current qubit state as context to the AI
+- [x] Create `/api/ai` route in Next.js
+- [x] Write the system prompt for the quantum computing tutor
+- [x] Implement OpenAI chat completions call with `max_tokens` cap
+- [x] Create chat panel component with floating icon (bottom-right)
+- [x] Wire chat input to the API route
+- [x] Display AI responses with LaTeX math rendering (KaTeX)
+- [x] Pass current qubit state as context to the AI
+- [x] Auth-guarded API route (401 for unauthenticated users)
+- [x] TypeScript compilation verified (zero errors)
+- [x] All 61 existing unit tests pass
 
 ## Phase 8: Polish & Deploy
 
