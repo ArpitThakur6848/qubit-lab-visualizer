@@ -18,11 +18,18 @@ Guidelines:
 - Do not make up information. If you are unsure, say so.
 - Do not discuss topics unrelated to quantum computing or the QubitLab application.`
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null
 
 export async function POST(request: NextRequest) {
+  if (!openai) {
+    return NextResponse.json(
+      { error: 'AI assistant is not configured. The OPENAI_API_KEY environment variable is missing.' },
+      { status: 503 }
+    )
+  }
+
   // Auth check
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

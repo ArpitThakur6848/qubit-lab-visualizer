@@ -1,0 +1,21 @@
+version: 1
+applications:
+  - appRoot: my-app
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - env | grep -e NEXT_PUBLIC_ >> .env.production
+            - echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env.production
+            - npm run build
+      artifacts:
+        baseDirectory: .next
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - node_modules/**/*
+          - .next/cache/**/*
