@@ -11,14 +11,46 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function TopBar({ email }: { email: string }) {
+export type Tab = 'dashboard' | 'history'
+
+interface TopBarProps {
+  email: string
+  activeTab: Tab
+  onTabChange: (tab: Tab) => void
+}
+
+export function TopBar({ email, activeTab, onTabChange }: TopBarProps) {
   const [isPending, startTransition] = useTransition()
 
   return (
     <div className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-800/50 px-6">
-      <span className="text-lg font-semibold tracking-tight text-zinc-100">
-        QubitLab
-      </span>
+      <div className="flex items-center gap-6">
+        <span className="text-lg font-semibold tracking-tight text-zinc-100">
+          QubitLab
+        </span>
+        <nav className="flex items-center gap-1">
+          <button
+            onClick={() => onTabChange('dashboard')}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              activeTab === 'dashboard'
+                ? 'bg-zinc-800/60 text-zinc-100'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => onTabChange('history')}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              activeTab === 'history'
+                ? 'bg-zinc-800/60 text-zinc-100'
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            Run History
+          </button>
+        </nav>
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/50 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800 focus:outline-none">

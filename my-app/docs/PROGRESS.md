@@ -89,11 +89,20 @@ Track what's done and what's next. Check off items as they're completed.
 - [x] Install shadcn dropdown-menu component
 - [x] TypeScript compilation verified (zero errors)
 
-## Phase 6: Preset Gate Sequences
+## Phase 6: Preset Gate Sequences & Persistence
 
-- [ ] User can save gate sequence presets and custom gates
-- [ ] Create preset selector component (dropdown or cards)
-- [ ] Implement preset loading (reset then apply gates in sequence)
+- [x] Create `lib/circuits.ts` data access layer (save/load/delete circuits, save/load run history)
+- [x] Create `SaveCircuitDialog` component (save current gate sequence with name)
+- [x] Create `SavedCircuitsPanel` component (collapsible panel to view/load/delete saved circuits)
+- [x] Create `RunHistoryPanel` component (collapsible panel showing last 10 runs with timestamps)
+- [x] Integrate SaveCircuitDialog into ControlPanel sequence section
+- [x] Integrate SavedCircuitsPanel and RunHistoryPanel into ControlPanel sidebar
+- [x] Lift gate sequence state to DashboardShell for cross-component sharing
+- [x] Persist run history on every Run (fire-and-forget with auto-refresh)
+- [x] Add `is_custom` column to `circuit_steps` table in schema
+- [x] Add `run_history` table with RLS policies in schema
+- [x] TypeScript compilation verified (zero errors)
+- [x] All 61 existing unit tests pass
 
 ## Phase 7: AI Explainer
 
