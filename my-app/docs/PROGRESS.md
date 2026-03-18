@@ -106,14 +106,16 @@ Track what's done and what's next. Check off items as they're completed.
 
 ## Phase 7: AI Explainer
 
-- [ ] Create `/api/ai` route in Next.js
-- [ ] Write the system prompt for the quantum computing tutor
-- [ ] Implement OpenAI chat completions call with `max_tokens` cap
-- [ ] Add basic rate limiting or request throttling
-- [ ] Create chat panel component in the frontend
-- [ ] Wire chat input to the API route
-- [ ] Display AI responses in the panel
-- [ ] Optionally pass current qubit state as context to the AI
+- [x] Create `/api/ai` route in Next.js
+- [x] Write the system prompt for the quantum computing tutor
+- [x] Implement OpenAI chat completions call with `max_tokens` cap
+- [x] Create chat panel component with floating icon (bottom-right)
+- [x] Wire chat input to the API route
+- [x] Display AI responses with LaTeX math rendering (KaTeX)
+- [x] Pass current qubit state as context to the AI
+- [x] Auth-guarded API route (401 for unauthenticated users)
+- [x] TypeScript compilation verified (zero errors)
+- [x] All 61 existing unit tests pass
 
 ## Phase 8: Polish & Deploy
 

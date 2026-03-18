@@ -53,7 +53,7 @@ export function TopBar({ email, activeTab, onTabChange }: TopBarProps) {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/50 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800 focus:outline-none">
+          <button suppressHydrationWarning className="flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/50 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800 focus:outline-none">
             <User className="h-4 w-4" />
             <span className="max-w-[160px] truncate">{email}</span>
             <ChevronDown className="h-3 w-3" />

@@ -7,6 +7,7 @@ import { SphereViewport } from './sphere-viewport'
 import { InfoPanel, type QubitStatus } from './info-panel'
 import { RunHistoryPanel } from './run-history-panel'
 import { SavedCircuitsPanel } from './saved-circuits-panel'
+import { AiChatPanel } from './ai-chat-panel'
 import { runCircuit } from '@/lib/qubit'
 import { saveRunHistory } from '@/lib/circuits'
 
@@ -126,6 +127,8 @@ export function DashboardShell({ email }: { email: string }) {
           refreshKey={historyRefreshKey}
         />
       )}
+
+      <AiChatPanel status={status} gates={gates} />
     </div>
   )
 }
