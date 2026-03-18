@@ -5,6 +5,9 @@ An interactive web app that visualizes single-qubit quantum states on a 3D Bloch
 ![Status](https://img.shields.io/badge/status-deployed-brightgreen)
 
 ---
+## Sign-In
+
+Any email and password works for authentication.
 
 ## Overview
 
