@@ -119,14 +119,21 @@ Track what's done and what's next. Check off items as they're completed.
 
 ## Phase 8: Polish & Deploy
 
-- [ ] Review and clean up all components
-- [ ] Ensure consistent styling across the app
-- [ ] Add loading states and error handling for network calls
-- [ ] Test auth flow end-to-end (sign up, save, sign out, sign in, load)
-- [ ] Test AI explainer with various questions
-- [ ] Set up AWS Amplify project
-- [ ] Configure environment variables in Amplify
-- [ ] Deploy to Amplify
+- [x] Review and clean up all components
+- [x] Ensure consistent styling across the app
+- [x] Add loading states and error handling for network calls
+- [x] Root page redirects to /dashboard (removes default Next.js boilerplate)
+- [x] AI route gracefully handles missing OPENAI_API_KEY (returns 503)
+- [x] Remove unused default public assets (next.svg, vercel.svg, etc.)
+- [x] Create `.env.example` (committed to repo)
+- [x] Create `amplify.yml` build spec for AWS Amplify
+- [x] Update README with deployment info and project structure
+- [x] TypeScript compilation verified (zero errors)
+- [x] All 61 existing unit tests pass
+- [x] Production build verified (`next build` succeeds)
+- [ ] Set up AWS Amplify project (manual step)
+- [ ] Configure environment variables in Amplify (manual step)
+- [ ] Deploy to Amplify (manual step)
 - [ ] Verify production build works correctly
 - [ ] Test deployed app end-to-end
 - [ ] Update README with live URL

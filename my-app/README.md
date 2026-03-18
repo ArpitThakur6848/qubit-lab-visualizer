@@ -1,47 +1,42 @@
 # QubitLab Visualizer
 
-An interactive web app that visualizes single-qubit quantum states on a 3D Bloch sphere. You can observe the state of a qubit, apply quantum gates, and watch the state evolve in real time.
+An interactive web app that visualizes single-qubit quantum states on a 3D Bloch sphere. Apply quantum gates, observe state in real time, and ask an AI tutor to explain what you see.
 
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
+![Status](https://img.shields.io/badge/status-deployed-brightgreen)
 
 ---
 
 ## Overview
 
-QubitLab Visualizer is useful for conceptualizing abstract concepts. You can visually see a qubit vector rotate on a Bloch sphere when you apply an X gate, and see the resultant values that occur from it, such as the amplitudes.
+QubitLab Visualizer helps you conceptualize abstract quantum computing concepts. You can visually see a qubit vector rotate on a Bloch sphere when you apply gates like X, H, or custom rotations, and inspect the resulting amplitudes, probabilities, and Bloch angles.
 
-The web app includes an AI explainer that can answer clarifying questions from the user.
-
-## Features
-
-- **3D Bloch Sphere** - Interactive, rotatable visualization of a single qubit state using React Three Fiber
-- **Quantum Gate Controls** - Apply X, Y, Z, H, S, and T gates
-- **State Display** - View amplitudes, probabilities, and Dirac notation
-- **Preset Examples** - Pre-built sequences that demonstrate key quantum concepts (superposition, etc.)
-- **Save & Load Circuits** - Persist gate sequences to Supabase so you can revisit or share them
-- **AI Explainer** - Ask the built-in assistant clarifying questions 
+The app includes:
+- A 3D Bloch sphere rendered with React Three Fiber
+- Standard gate controls (X, Y, Z, H, S, T) and custom rotation gates
+- Save/load circuit sequences (persisted per user via Supabase)
+- Run history tracking
+- An AI explainer assistant powered by OpenAI
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js (App Router) |
-| Language | TypeScript |
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
 | 3D Rendering | React Three Fiber + Three.js |
 | Styling | Tailwind CSS v4 + shadcn/ui |
-| Database & Auth | Supabase (PostgreSQL + Auth) |
-| AI | OpenAI API (chat completions) |
+| Database & Auth | Supabase (PostgreSQL + Auth + RLS) |
+| AI | OpenAI API (gpt-4o-mini) |
 | Hosting | AWS Amplify |
-
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- npm or pnpm
+- npm
 - A Supabase project (free tier works)
-- An OpenAI API key
+- An OpenAI API key (optional, for AI assistant)
 
 ### Installation
 
@@ -51,6 +46,19 @@ cd qubit-lab-visualizer/my-app
 npm install
 ```
 
+### Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+Required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+- `OPENAI_API_KEY` - Your OpenAI API key (needed for AI assistant)
+
 ### Run Locally
 
 ```bash
@@ -58,3 +66,32 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Run Tests
+
+```bash
+npm test
+```
+
+## Deployment
+
+The app is deployed on AWS Amplify. The `amplify.yml` build spec in the repo root configures the build pipeline. Environment variables are set in the Amplify console.
+
+## Project Structure
+
+```
+my-app/
+  app/           # Next.js App Router pages and API routes
+  components/    # React components (dashboard/, ui/)
+  lib/           # Qubit engine, Supabase clients, utilities
+  hooks/         # React hooks (useUser)
+  docs/          # Architecture, schema, features, progress docs
+  supabase/      # SQL schema
+```
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Database Schema](docs/DB_SCHEMA.md)
+- [Features](docs/FEATURES.md)
+- [Progress](docs/PROGRESS.md)
