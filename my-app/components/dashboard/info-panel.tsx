@@ -32,7 +32,7 @@ const panelClass =
 
 export function InfoPanel({ status, notation, onNotationChange }: InfoPanelProps) {
   return (
-    <div className="grid shrink-0 grid-cols-2 gap-4">
+    <div className="grid shrink-0 grid-cols-1 gap-4 sm:grid-cols-2">
       {/* Status Panel */}
       <div className={panelClass}>
         <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-500">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Play, Trash2, Plus, Check, X } from 'lucide-react'
+import { Play, Trash2, Plus, Check, X, RotateCcw } from 'lucide-react'
 
 export type GateEntry = {
   name: string
@@ -16,6 +16,7 @@ interface ControlPanelProps {
     betaImag: number
     gates: GateEntry[]
   }) => void
+  onReset: () => void
 }
 
 const STANDARD_GATES = ['X', 'Y', 'Z', 'H', 'S', 'T'] as const
@@ -27,7 +28,7 @@ const sectionHeader = 'text-xs font-medium uppercase tracking-wider text-zinc-50
 
 const panelClass = 'rounded-2xl border border-zinc-800/50 bg-zinc-900/60 backdrop-blur-md p-4'
 
-export function ControlPanel({ onRun }: ControlPanelProps) {
+export function ControlPanel({ onRun, onReset }: ControlPanelProps) {
   const [alphaReal, setAlphaReal] = useState('1')
   const [alphaImag, setAlphaImag] = useState('0')
   const [betaReal, setBetaReal] = useState('0')
@@ -55,6 +56,17 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
 
   const clearSequence = () => setGateSequence([])
 
+  const handleReset = () => {
+    setAlphaReal('1')
+    setAlphaImag('0')
+    setBetaReal('0')
+    setBetaImag('0')
+    setGateSequence([])
+    setCustomAxis('X')
+    setCustomAngle('90')
+    onReset()
+  }
+
   const handleRun = () => {
     onRun({
       alphaReal: parseFloat(alphaReal) || 0,
@@ -68,7 +80,7 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
   const isUnitary = customAngle !== '' && !isNaN(parseFloat(customAngle))
 
   return (
-    <div className="flex w-72 shrink-0 flex-col overflow-hidden">
+    <div className="flex w-full flex-col overflow-hidden md:w-72 md:shrink-0">
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto pr-1">
         {/* State Input */}
         <div className={panelClass}>
@@ -189,11 +201,18 @@ export function ControlPanel({ onRun }: ControlPanelProps) {
         )}
       </div>
 
-      {/* Run Button - pinned at bottom */}
-      <div className="pt-3">
+      {/* Action Buttons - pinned at bottom */}
+      <div className="flex gap-2 pt-3">
+        <button
+          onClick={handleReset}
+          className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-700/40 bg-zinc-800/30 px-4 py-3 text-sm font-medium text-zinc-300 hover:bg-zinc-700/50"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
         <button
           onClick={handleRun}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-sky-600 py-3 text-sm font-medium text-white hover:bg-sky-500"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-sky-600 py-3 text-sm font-medium text-white hover:bg-sky-500"
         >
           <Play className="h-4 w-4" />
           Run

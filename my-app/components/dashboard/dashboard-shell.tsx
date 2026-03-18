@@ -24,6 +24,11 @@ export function DashboardShell({ email }: { email: string }) {
   const [blochVector, setBlochVector] = useState<[number, number, number]>(DEFAULT_BLOCH)
   const [notation, setNotation] = useState<'dirac' | 'matrix'>('dirac')
 
+  const handleReset = () => {
+    setStatus(DEFAULT_STATUS)
+    setBlochVector(DEFAULT_BLOCH)
+  }
+
   const handleRun = (data: {
     alphaReal: number
     alphaImag: number
@@ -56,9 +61,9 @@ export function DashboardShell({ email }: { email: string }) {
   return (
     <div className="flex h-screen flex-col bg-zinc-950 text-zinc-100">
       <TopBar email={email} />
-      <div className="flex flex-1 gap-4 overflow-hidden p-4">
-        <ControlPanel onRun={handleRun} />
-        <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+      <div className="flex flex-1 flex-col gap-4 overflow-hidden p-4 md:flex-row">
+        <ControlPanel onRun={handleRun} onReset={handleReset} />
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
           <SphereViewport blochVector={blochVector} />
           <InfoPanel
             status={status}
